@@ -1,0 +1,17 @@
+/**
+ * 
+ */
+package ${package_iapi};
+
+import ${package_model}.${bean}Model;
+
+/**
+ * ${comment} <br />
+ * Database table: ${table} <br />
+ * @author Colin
+ */
+public interface I${bean}Service extends __IAPI<${bean}Model> {
+
+	String PREFIX_OF_SQL_MAP_ID = "${bean}Model.";
+
+}

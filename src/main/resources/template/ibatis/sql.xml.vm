@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap>
+
+#set($__4 = '$')
+	<!-- ${table.comment} -->
+	<typeAlias alias="${bean}Model" type="${package_model}.${bean}Model" />
+
+	<sql id="TABLE_${beanUpper}"> ${table.name} </sql>
+
+
+
+
+
+	<insert id="${bean}Model.save" parameterClass="${bean}Model">
+		INSERT INTO
+		<include refid="TABLE_${beanUpper}" />
+		( ${table.columnString} )
+		VALUES
+		( ${table.columnValueString2} )
+	</insert>
+
+#if( ${hasPrimaryKey} == true )
+	<insert id="${bean}Model.saveReturnInt" parameterClass="${bean}Model">
+		INSERT INTO
+		<include refid="TABLE_${beanUpper}" />
+		( ${table.columnString} )
+		VALUES
+		( ${table.columnValueString2} )
+		<selectKey resultClass="int" keyProperty="${primaryKey}">
+			SELECT LAST_INSERT_ID() AS ${primaryKey}    
+	    </selectKey>
+	</insert>
+#end
+
+#if( ${hasPrimaryKey} == true )
+	<insert id="${bean}Model.saveReturnLong" parameterClass="${bean}Model">
+		INSERT INTO
+		<include refid="TABLE_${beanUpper}" />
+		( ${table.columnString} )
+		VALUES
+		( ${table.columnValueString2} )
+		<selectKey resultClass="long" keyProperty="${primaryKey}">
+			SELECT LAST_INSERT_ID() AS ${primaryKey}    
+	    </selectKey>
+	</insert>
+	
+	
+	
+	
+	
+#if( ${hasPrimaryKey} == true )
+	<delete id="${bean}Model.delete">
+		DELETE FROM
+		<include refid="TABLE_${beanUpper}" />
+		WHERE ${primaryKey} = #${primaryKey}#
+	</delete>
+#end
+	
+	<delete id="${bean}Model.deleteMulti">
+		DELETE FROM
+		<include refid="TABLE_${beanUpper}" />
+		WHERE
+		<dynamic>
+#foreach( $itm in $table.columns )
+			<isNotEmpty property="${itm.name}" prepend="AND"> ${itm.name} = #${itm.name}# </isNotEmpty>
+#end
+		</dynamic>
+	</delete>
+#end
+
+#if( ${hasPrimaryKey} == true )
+	<delete id="${bean}Model.deleteByIDs" parameterClass="java.util.Map">
+		DELETE FROM
+		<include refid="TABLE_${beanUpper}" />
+		WHERE
+		<iterate conjunction="OR" open="(" close=")" property="array">
+			${primaryKey} = ${__4}array[]${__4}
+		</iterate>
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+		<isNotEmpty property="param.${itm.name}" prepend="AND"> ${itm.name} = #param.${itm.name}# </isNotEmpty>
+#end
+#end
+	</delete>
+#end
+	
+	
+	
+	
+	
+#if( ${hasPrimaryKey} == true )
+	<update id="${bean}Model.update">
+		UPDATE
+		<include refid="TABLE_${beanUpper}" />
+		<dynamic prepend="SET">	
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotNull prepend="," property="${itm.name}"> ${itm.name} = #${itm.name}# </isNotNull>
+#end
+#end			
+		</dynamic>
+		WHERE ${primaryKey} = #${primaryKey}#
+	</update>
+#end
+	
+	<update id="${bean}Model.updateMulti">
+		UPDATE
+		<include refid="TABLE_${beanUpper}" />
+		<dynamic prepend="SET">	
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotNull prepend="," property="to.${itm.name}"> ${itm.name} = #to.${itm.name}# </isNotNull>
+#end
+#end			
+		</dynamic>
+		<isNull property="param"> error here </isNull>
+		<dynamic prepend="WHERE">
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotEmpty property="param.${itm.name}" prepend="AND"> ${itm.name} = #param.${itm.name}# </isNotEmpty>
+#end
+#end
+		</dynamic>
+	</update>
+
+
+
+
+	
+#if( ${hasPrimaryKey} == true )
+	<select id="${bean}Model.getOneByPK" remapResults="true" resultClass="${bean}Model">
+		SELECT ${__4}columns${__4} FROM
+		<include refid="TABLE_${beanUpper}" />
+		WHERE ${primaryKey} = #param#
+	</select>
+#end
+	
+	<select id="${bean}Model.getOne" remapResults="true" resultClass="${bean}Model">
+		SELECT ${__4}columns${__4} FROM
+		<include refid="TABLE_${beanUpper}" />
+		<dynamic prepend="WHERE">
+#foreach( $itm in $table.columns )
+			<isNotEmpty property="param.${itm.name}" prepend="AND"> ${itm.name} = #param.${itm.name}# </isNotEmpty>
+#end
+		</dynamic>
+		LIMIT 1
+	</select>
+	
+	<select id="${bean}Model.getList" remapResults="true" resultClass="${bean}Model">
+		SELECT ${__4}columns${__4} FROM
+		<include refid="TABLE_${beanUpper}" />
+		<dynamic prepend="WHERE">
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotEmpty property="param.${itm.name}" prepend="AND"> ${itm.name} = #param.${itm.name}# </isNotEmpty>
+#end
+#end
+		</dynamic>
+		<isNotNull property="sort">
+		<isNotEmpty property="sort"> 
+			ORDER BY $sort$ $order$
+		</isNotEmpty>
+		</isNotNull>
+		<isNotNull property="length">
+		<isNotEmpty property="length"> 
+			LIMIT $length$
+		</isNotEmpty>
+		</isNotNull>
+	</select>
+	
+	<select id="${bean}Model.getCountInt" resultClass="int">
+		SELECT COUNT(*) FROM
+		<include refid="TABLE_${beanUpper}" />
+		<dynamic prepend="WHERE">
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotEmpty property="${itm.name}" prepend="AND"> ${itm.name} = #${itm.name}# </isNotEmpty>
+#end
+#end
+		</dynamic>
+	</select>
+	
+	<select id="${bean}Model.getCountLong" resultClass="long">
+		SELECT COUNT(*) FROM
+		<include refid="TABLE_${beanUpper}" />
+		<dynamic prepend="WHERE">
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotEmpty property="${itm.name}" prepend="AND"> ${itm.name} = #${itm.name}# </isNotEmpty>
+#end
+#end
+		</dynamic>
+	</select>
+	
+	<select id="${bean}Model.getCountLongMap" resultClass="long">
+		SELECT COUNT(*) FROM
+		<include refid="TABLE_${beanUpper}" />
+		<dynamic prepend="WHERE">
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotEmpty property="param.${itm.name}" prepend="AND"> ${itm.name} = #param.${itm.name}# </isNotEmpty>
+#end
+#end
+		</dynamic>
+	</select>
+	
+	<select id="${bean}Model.getPageList" remapResults="true" resultClass="${bean}Model" parameterClass="java.util.Map">
+		SELECT ${__4}columns${__4} FROM
+		<include refid="TABLE_${beanUpper}" />
+		<dynamic prepend="WHERE">
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotEmpty property="param.${itm.name}" prepend="AND"> ${itm.name} = #param.${itm.name}# </isNotEmpty>
+#end
+#end
+		</dynamic>
+		ORDER BY $sort$ $order$
+		LIMIT $begin$, $end$
+	</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</sqlMap>

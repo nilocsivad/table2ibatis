@@ -1,0 +1,32 @@
+/**
+ * 
+ */
+package ${package_util};
+
+/**
+ * @author Colin
+ */
+public class ConstUtil {
+
+	private static String RESOURCEPREFIX, RESOURCEPATH;
+
+	public ConstUtil(String resourcePrefix, String resourcePath) {
+		RESOURCEPREFIX = resourcePrefix;
+		RESOURCEPATH = resourcePath;
+	}
+
+	/**
+	 * @return the RESOURCEPREFIX
+	 */
+	public static String getResourcePrefix() {
+		return RESOURCEPREFIX;
+	}
+
+	/**
+	 * @return the RESOURCEPATH
+	 */
+	public static String getResourcePath() {
+		return RESOURCEPATH;
+	}
+
+}

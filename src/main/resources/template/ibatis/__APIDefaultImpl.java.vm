@@ -1,0 +1,195 @@
+/**
+ * 
+ */
+package ${package_api};
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import ${package_database}.IDAO;
+import ${package_iapi}.__IAPI;
+import ${package_ref}.DataGridModel;
+import ${package_util}.ConstUtil;
+import ${package_util}.MapUtil;
+
+/**
+ * @author Colin
+ * @param <T>
+ */
+public abstract class __APIDefaultImpl<T> implements __IAPI<T> {
+
+	/**
+	 * 
+	 */
+	public __APIDefaultImpl() {
+	}
+
+	protected abstract IDAO<T> getDAO();
+	
+	protected abstract String getPrefixOfSqlMapID();
+
+
+
+
+	protected String getHttpProj(HttpServletRequest request) {
+		int port = request.getServerPort();
+		String http = request.getServerName() + (port == 80 ? "" : ":" + port) + "/" + request.getContextPath() + "/";
+		return request.getScheme() + "://" + http.replace("//", "/");
+	}
+
+	protected String getHttpResource(HttpServletRequest request) {
+		int port = request.getServerPort();
+		String http = request.getServerName() + (port == 80 ? "" : ":" + port) + "/" + ConstUtil.getResourcePrefix() + "/";
+		return request.getScheme() + "://" + http.replace("//", "/");
+	}
+
+	protected int toInt(String txt) {
+		return Integer.parseInt(txt);
+	}
+
+	protected Float toFt(String txt) {
+		return Float.parseFloat(txt);
+	}
+
+	protected double toDb(String txt) {
+		return Double.parseDouble(txt);
+	}
+
+
+
+
+
+
+
+	@Override
+	public Object save(T model) {
+		return this.save(this.getPrefixOfSqlMapID() + "save", model);
+	}
+
+	public Object save(String sqlMapID, Object model) {
+		return this.getDAO().save(sqlMapID, model);
+	}
+
+	@Override
+	public Object saveMulti(String sqlMapID, Object obj) {
+		return this.getDAO().saveMulti(sqlMapID, obj);
+	}
+
+	@Override
+	public Integer saveReturnInt(T model) {
+		return this.saveReturnInt(this.getPrefixOfSqlMapID() + "saveReturnInt", model);
+	}
+
+	public Integer saveReturnInt(String sqlMapID, T model) {
+		return this.getDAO().saveReturnInt(sqlMapID, model);
+	}
+
+	@Override
+	public Long saveReturnLong(T model) {
+		return this.saveReturnLong(this.getPrefixOfSqlMapID() + "saveReturnLong", model);
+	}
+
+	public Long saveReturnLong(String sqlMapID, T model) {
+		return this.getDAO().saveReturnLong(sqlMapID, model);
+	}
+
+	@Override
+	public int update(T model) {
+		return this.update(this.getPrefixOfSqlMapID() + "update", model);
+	}
+
+	@Override
+	public int update(String sqlMapID, Object obj) {
+		return this.getDAO().update(sqlMapID, obj);
+	}
+
+	@Override
+	public int delete(T model) {
+		return this.delete(this.getPrefixOfSqlMapID() + "delete", model);
+	}
+
+	@Override
+	public int delete(String sqlMapID, Object obj) {
+		if (obj == null) {
+			return 0;
+		}
+		return this.getDAO().delete(sqlMapID, obj);
+	}
+
+	@Override
+	public T getOneByPK(String columns, Object obj) {
+		return this.getOne(columns, this.getPrefixOfSqlMapID() + "getOneByPK", obj);
+	}
+
+	@Override
+	public T getOne(String columns, Object obj) {
+		return this.getOne(columns, this.getPrefixOfSqlMapID() + "getOne", obj);
+	}
+
+	@Override
+	public T getOne(String columns, String sqlMapID, Object obj) {
+		Map<String, Object> map = MapUtil.mapThem(new String[] { "columns", "param" }, columns, obj);
+		return this.getDAO().getOne(sqlMapID, map);
+	}
+
+	@Override
+	public List<T> getList(String columns, Object obj) {
+		return this.getList(columns, this.getPrefixOfSqlMapID() + "getList", obj);
+	}
+
+	@Override
+	public List<T> getList(String columns, String sqlMapID, Object obj) {
+		Map<String, Object> map = MapUtil.mapThem(new String[] { "columns", "param" }, columns, obj);
+		return this.getDAO().getList(sqlMapID, map);
+	}
+
+	@Override
+	public List<T> getListByMap(String columns, Map<String, Object> map) {
+		return this.getListByMap(columns, this.getPrefixOfSqlMapID() + "getList", map);
+	}
+	
+	@Override
+	public List<T> getListByMap(String columns, String sqlMapID, Map<String, Object> map) {
+		map.put("columns", columns);
+		return this.getDAO().getList(sqlMapID, map);
+	}
+
+	@Override
+	public Integer getCountInt(T param) {
+		return this.getCountInt(this.getPrefixOfSqlMapID() + "getCountInt", param);
+	}
+
+	@Override
+	public Integer getCountInt(String sqlMapID, Object param) {
+		return this.getDAO().getCountInt(sqlMapID, param);
+	}
+
+	@Override
+	public Long getCountLong(T param) {
+		return this.getCountLong(this.getPrefixOfSqlMapID() + "getCountLong", param);
+	}
+
+	@Override
+	public Long getCountLong(String sqlMapID, Object param) {
+		return this.getDAO().getCountLong(sqlMapID, param);
+	}
+
+	@Override
+	public Map<String, Object> getPageList(String columns, DataGridModel dgm, T model) {
+		return this.getPageList(columns, this.getPrefixOfSqlMapID() + "getPageList", this.getPrefixOfSqlMapID() + "getCountLongMap", dgm, model);
+	}
+
+	@Override
+	public Map<String, Object> getPageList(String columns, String sqlMapSelectID, String sqlMapCountID, DataGridModel dgm, T model) {
+		return this.getPageList(columns, sqlMapSelectID, sqlMapCountID, dgm, model, null);
+	}
+
+	@Override
+	public Map<String, Object> getPageList(String columns, String sqlMapSelectID, String sqlMapCountID, DataGridModel dgm, T model, Map<String, Object> map) {
+		return this.getDAO().getPageList(columns, sqlMapSelectID, sqlMapCountID, dgm, model, map);
+	}
+
+
+}

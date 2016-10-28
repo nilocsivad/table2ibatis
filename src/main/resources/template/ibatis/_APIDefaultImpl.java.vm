@@ -1,0 +1,40 @@
+/**
+ * 
+ */
+package ${package_api};
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import ${package_database}.IDAO;
+import ${package_iapi}.I${bean}Service;
+import ${package_model}.${bean}Model;
+
+/**
+ * ${comment} <br />
+ * Database table: ${table} <br />
+ * @author Colin
+ */
+@Service
+public class ${bean}ServiceImplement extends __APIDefaultImpl<${bean}Model> implements I${bean}Service {
+
+	@Autowired
+	private IDAO<${bean}Model> __${bean}DAO;
+
+	/**
+	 * 
+	 */
+	public ${bean}ServiceImplement() {
+	}
+
+	@Override
+	protected IDAO<${bean}Model> getDAO() {
+		return __${bean}DAO;
+	}
+
+	@Override
+	protected String getPrefixOfSqlMapID() {
+		return PREFIX_OF_SQL_MAP_ID;
+	}
+
+}
