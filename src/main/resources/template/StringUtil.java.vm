@@ -1,0 +1,22 @@
+/**
+ * 
+ */
+package ${package_util};
+
+/**
+ * @author Colin
+ */
+public class StringUtil {
+
+	/**
+	 * 
+	 */
+	private StringUtil() {
+	}
+
+	public static final synchronized String getUniqueID() {
+		long lTimeMillis = System.currentTimeMillis();
+		return String.format("%#017x-%s", lTimeMillis, new RandomString(32));
+	}
+
+}

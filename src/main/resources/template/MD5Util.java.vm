@@ -17,10 +17,10 @@ public class MD5Util {
 	/**
 	 * 
 	 */
-	public MD5Util() {
+	private MD5Util() {
 	}
 
-	public static String getMD5(final String text) {
+	public static final String getMD5(final String text) {
 
 		try {
 			MessageDigest md = MessageDigest.getInstance(TYPE_MD5);
