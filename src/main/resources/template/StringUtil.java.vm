@@ -3,6 +3,8 @@
  */
 package ${package_util};
 
+import ${package_ref}.RandomString;
+
 /**
  * @author Colin
  */
