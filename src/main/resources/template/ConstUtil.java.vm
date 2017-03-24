@@ -3,30 +3,40 @@
  */
 package ${package_util};
 
+import java.util.Map;
+
 /**
  * @author Colin
  */
 public class ConstUtil {
 
-	private static String RESOURCEPREFIX, RESOURCEPATH;
+	private static Map<String, String> MAP_DATA;
+	private static Map<String, Integer> NUM_MAP_DATA;
 
-	public ConstUtil(String resourcePrefix, String resourcePath) {
-		RESOURCEPREFIX = resourcePrefix;
-		RESOURCEPATH = resourcePath;
+	public ConstUtil(Map<String, String> mapData, Map<String, Integer> numMapData) {
+		MAP_DATA = mapData;
+		NUM_MAP_DATA = numMapData;
 	}
 
+
+
+
+
+
+
+
 	/**
-	 * @return the RESOURCEPREFIX
+	 * /// 资源文件夹对外访问前缀,对应 Tomcat &lt;Context path="" /&gt; ///
 	 */
 	public static String getResourcePrefix() {
-		return RESOURCEPREFIX;
+		return MAP_DATA.get("resourcePrefix");
 	}
 
 	/**
-	 * @return the RESOURCEPATH
+	 * /// 服务器本地资源文件夹,对应 Tomcat &lt;Context docBase="" /&gt; ///
 	 */
 	public static String getResourcePath() {
-		return RESOURCEPATH;
+		return MAP_DATA.get("resourcePath");
 	}
 
 }

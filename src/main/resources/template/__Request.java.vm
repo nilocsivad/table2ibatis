@@ -17,10 +17,24 @@ import ${package_util}.ConstUtil;
  */
 public class __Request implements IAPP {
 
+	protected static final String REDIRECT = "redirect:";
+
 	/**
 	 * 
 	 */
 	public __Request() {
+	}
+
+	private RequestContext reqCtx;
+
+
+
+
+	protected String getMessage(HttpServletRequest request, String key) {
+		if (reqCtx == null) {
+			reqCtx = new RequestContext(request);
+		}
+		return reqCtx.getMessage(key);
 	}
 
 	public Map<String, Object> queryLimit(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -46,6 +60,11 @@ public class __Request implements IAPP {
 		return map;
 	}
 
+	protected boolean existsText(HttpServletRequest request, String find) {
+		String uri = request.getRequestURI();
+		return uri.indexOf(find) > 0;
+	}
+
 	protected String getSuffixOfURL(HttpServletRequest request, String find) {
 		String uri = request.getRequestURI();
 		if (uri.contains(";")) {
@@ -53,7 +72,7 @@ public class __Request implements IAPP {
 		}
 		return uri.substring(uri.indexOf(find) + find.length());
 	}
-	
+
 	protected String getHttpProj(HttpServletRequest request) {
 		int port = request.getServerPort();
 		String http = request.getServerName() + (port == 80 ? "" : ":" + port) + "/" + request.getContextPath() + "/";
@@ -64,6 +83,69 @@ public class __Request implements IAPP {
 		int port = request.getServerPort();
 		String http = request.getServerName() + (port == 80 ? "" : ":" + port) + "/" + ConstUtil.getResourcePrefix() + "/";
 		return request.getScheme() + "://" + http.replace("//", "/");
+	}
+
+	protected void translateData(Map<String, Object> map, int from, String[] columns, List<?> listData) {
+		this.translateData(map, from, columns, JSON_RESULT, listData);
+	}
+
+	protected void translateData(Map<String, Object> map, int from, String[] columns, String key, List<?> listData) {
+		try {
+			map.put(key, MapUtil.toMapList2(from, listData, columns));
+		}
+		catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			map.put(key, listData);
+			e.printStackTrace();
+		}
+	}
+
+	protected void translateData(Map<String, Object> map, int from, String[] columns, __Model oneData) {
+		this.translateData(map, from, columns, JSON_RESULT, oneData);
+	}
+
+	protected void translateData(Map<String, Object> map, int from, String[] columns, String key, __Model oneData) {
+		try {
+			map.put(key, MapUtil.toMap2(from, oneData, columns));
+		}
+		catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			map.put(key, oneData);
+			e.printStackTrace();
+		}
+	}
+
+	protected String suffix(String file) {
+		int index = file.lastIndexOf(".");
+		if (index < 0) {
+			return "";
+		}
+		return file.substring(index);
+	}
+
+	protected String storageImage(String folder, InputStream imageStream, String suffix) throws FileNotFoundException, IOException {
+
+		folder = StringUtil.path(folder);
+
+		String folderPath = ConstUtil.getResourcePath(); /// E:\resource or /appdata/resource
+		File folderRes = new File(folderPath, folder);
+		if (folderRes.exists() == false) {
+			folderRes.mkdirs();
+		}
+
+
+		String fileName = String.format("%014Xd-%s%s", System.currentTimeMillis(), new RandomString(14), suffix);
+		File fileImage = new File(folderRes, fileName);
+
+		BufferedInputStream input = new BufferedInputStream(imageStream);
+		BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(fileImage));
+		int len = 0;
+		byte[] buf = new byte[1024 * 24]; /// 24k ///
+		while ((len = input.read(buf)) > 0) {
+			output.write(buf, 0, len);
+		}
+		input.close();
+		output.close();
+
+		return folder + "/" + fileName;
 	}
 
 }

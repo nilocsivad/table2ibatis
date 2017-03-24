@@ -15,18 +15,42 @@
 	<insert id="${bean}Model.save" parameterClass="${bean}Model">
 		INSERT INTO
 		<include refid="TABLE_${beanUpper}" />
-		( ${table.columnString} )
+		<dynamic prepend="(" close=")">
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotEmpty property="${itm.name}" prepend=","> ${itm.name} </isNotEmpty>
+#end
+#end
+		</dynamic>
 		VALUES
-		( ${table.columnValueString2} )
+		<dynamic prepend="(" close=")">
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotEmpty property="${itm.name}" prepend=","> #${itm.name}# </isNotEmpty>
+#end
+#end
+		</dynamic>
 	</insert>
 
 #if( ${hasPrimaryKey} == true )
 	<insert id="${bean}Model.saveReturnInt" parameterClass="${bean}Model">
 		INSERT INTO
 		<include refid="TABLE_${beanUpper}" />
-		( ${table.columnString} )
+		<dynamic prepend="(" close=")">
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotEmpty property="${itm.name}" prepend=","> ${itm.name} </isNotEmpty>
+#end
+#end
+		</dynamic>
 		VALUES
-		( ${table.columnValueString2} )
+		<dynamic prepend="(" close=")">
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotEmpty property="${itm.name}" prepend=","> #${itm.name}# </isNotEmpty>
+#end
+#end
+		</dynamic>
 		<selectKey resultClass="int" keyProperty="${primaryKey}">
 			SELECT LAST_INSERT_ID() AS ${primaryKey}    
 	    </selectKey>
@@ -37,9 +61,21 @@
 	<insert id="${bean}Model.saveReturnLong" parameterClass="${bean}Model">
 		INSERT INTO
 		<include refid="TABLE_${beanUpper}" />
-		( ${table.columnString} )
+		<dynamic prepend="(" close=")">
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotEmpty property="${itm.name}" prepend=","> ${itm.name} </isNotEmpty>
+#end
+#end
+		</dynamic>
 		VALUES
-		( ${table.columnValueString2} )
+		<dynamic prepend="(" close=")">
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotEmpty property="${itm.name}" prepend=","> #${itm.name}# </isNotEmpty>
+#end
+#end
+		</dynamic>
 		<selectKey resultClass="long" keyProperty="${primaryKey}">
 			SELECT LAST_INSERT_ID() AS ${primaryKey}    
 	    </selectKey>
@@ -61,7 +97,7 @@
 		DELETE FROM
 		<include refid="TABLE_${beanUpper}" />
 		WHERE
-		<dynamic>
+		<dynamic prepend=" ">
 #foreach( $itm in $table.columns )
 			<isNotEmpty property="${itm.name}" prepend="AND"> ${itm.name} = #${itm.name}# </isNotEmpty>
 #end
@@ -174,9 +210,7 @@
 		<include refid="TABLE_${beanUpper}" />
 		<dynamic prepend="WHERE">
 #foreach( $itm in $table.columns )
-#if( ${itm.primayKey} == false ) 
 			<isNotEmpty property="${itm.name}" prepend="AND"> ${itm.name} = #${itm.name}# </isNotEmpty>
-#end
 #end
 		</dynamic>
 	</select>

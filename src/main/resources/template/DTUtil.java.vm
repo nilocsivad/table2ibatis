@@ -48,6 +48,16 @@ public class DTUtil {
 		return getFmt(fmt).format(date);
 	}
 
+	public static Date parseDT(String fmt, String date) {
+		try {
+			return getFmt(fmt).parse(date);
+		}
+		catch (ParseException e) {
+			e.printStackTrace();
+			return new Date();
+		}
+	}
+
 	public static DateFormat getFmt(String fmt) {
 
 		return new SimpleDateFormat(fmt);

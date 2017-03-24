@@ -30,8 +30,8 @@ public class ${bean}PhoneRequest extends __PhoneRequest implements IAPP {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = { "l{ver}/{from}/list/data" })
-	public Map<String, Object> listData(@PathVariable int ver, @PathVariable int from, HttpServletRequest request) throws Exception {
+	@RequestMapping(value = { "data" })
+	public Map<String, Object> data(HttpServletRequest request) throws Exception {
 		Map<String, Object> map = MapUtil.mapThem(new String[] { "datetime" }, DTUtil.nowDT());
 		return map;
 	}

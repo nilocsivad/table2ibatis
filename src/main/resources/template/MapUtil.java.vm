@@ -22,11 +22,12 @@ public class MapUtil {
 	public MapUtil() {
 	}
 
-	public static Map<String, Object> mapThem(String[] keys, Object... vals) {
+	@SuppressWarnings("unchecked")
+	public static <V> Map<String, V> mapThem(String[] keys, V... vals) {
 		if (keys == null || keys.length == 0) {
-			return new HashMap<String, Object>(4);
+			return new HashMap<String, V>(4);
 		}
-		Map<String, Object> map = new HashMap<String, Object>(keys.length + 1);
+		Map<String, V> map = new HashMap<String, V>(keys.length + 1);
 		for (int i = 0; i < keys.length; i++) {
 			if (vals.length > i) {
 				map.put(keys[i], vals[i]);
@@ -45,16 +46,8 @@ public class MapUtil {
 	/**
 	 * @param cols "name,address,telephone"
 	 */
-	public static Map<String, Object> toMap1(__Model obj, String cols) throws SecurityException, IllegalArgumentException, IllegalAccessException {
-		return toMap1(0, obj, cols);
-	}
-
 	public static Map<String, Object> toMap1(int from, __Model obj, String cols) throws SecurityException, IllegalArgumentException, IllegalAccessException {
-		return toMap2(0, obj, cols.split(","));
-	}
-
-	public static Map<String, Object> toMap2(__Model obj, String... fields) throws SecurityException, IllegalArgumentException, IllegalAccessException {
-		return toMap2(0, obj, fields);
+		return toMap2(from, obj, cols.split(","));
 	}
 
 	public static Map<String, Object> toMap2(int from, __Model obj, String... fields) throws SecurityException, IllegalArgumentException, IllegalAccessException {
@@ -66,13 +59,19 @@ public class MapUtil {
 				try {
 					Field fd = cls.getDeclaredField(key);
 					if (fd != null) {
+						boolean accessible = fd.isAccessible();
 						fd.setAccessible(true);
 						Object val = fd.get(obj);
 						if (val == null) {
 							map.put(key, (from == 9 ? "nil" : null));
 						}
 						else {
-							map.put(key, val);
+							if (from == 9 && fd.getType().isAssignableFrom(Integer.class)) {
+								map.put(key, val + "");
+							}
+							else {
+								map.put(key, val);
+							}
 						}
 						// else {
 						// if (val instanceof Integer && from == 9) {
@@ -84,7 +83,7 @@ public class MapUtil {
 						// map.put(key, val);
 						// }
 						// }
-						fd.setAccessible(false);
+						fd.setAccessible(accessible);
 					}
 				}
 				catch (NoSuchFieldException e) {
@@ -99,22 +98,17 @@ public class MapUtil {
 	/**
 	 * @param cols "name,address,telephone"
 	 */
-	public List<Map<String, Object>> toMapList1(List<__Model> obj, String cols) throws SecurityException, IllegalArgumentException, IllegalAccessException {
-		return this.toMapList1(0, obj, cols);
+	public static List<Map<String, Object>> toMapList1(int from, List<?> obj, String cols) throws SecurityException, IllegalArgumentException, IllegalAccessException {
+		return toMapList2(from, obj, cols.split(","));
 	}
 
-	public List<Map<String, Object>> toMapList1(int from, List<__Model> obj, String cols) throws SecurityException, IllegalArgumentException, IllegalAccessException {
-		return this.toMapList2(0, obj, cols.split(","));
-	}
-
-	public List<Map<String, Object>> toMapList2(List<__Model> obj, String... fields) throws SecurityException, IllegalArgumentException, IllegalAccessException {
-		return this.toMapList2(0, obj, fields);
-	}
-
-	public List<Map<String, Object>> toMapList2(int from, List<__Model> obj, String... fields) throws SecurityException, IllegalArgumentException, IllegalAccessException {
+	public static List<Map<String, Object>> toMapList2(int from, List<?> obj, String... fields) throws SecurityException, IllegalArgumentException, IllegalAccessException {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>(obj.size() + 1);
-		for (__Model t : obj) {
-			list.add(toMap2(from, t, fields));
+		for (Object t : obj) {
+			if (t instanceof __Model) {
+				__Model mo = (__Model) t;
+				list.add(toMap2(from, mo, fields));
+			}
 		}
 		return list;
 	}
@@ -125,19 +119,31 @@ public class MapUtil {
 	 * @param map
 	 * @return
 	 */
-	public Map<String, Object> mapData(int from, Map<String, Object> map) {
-		if (from == 9) {
-			for (Map.Entry<String, Object> itm : map.entrySet()) {
-				if (itm.getValue() == null) {
-					itm.setValue("nil");
+	public static List<Map<String, Object>> mapData(List<Map<String, Object>> listMap) {
+		List<Map<String, Object>> rMaps = new ArrayList<>(listMap.size() + 1);
+		for (Map<String, Object> map : listMap) {
+			rMaps.add(mapData(map));
+		}
+		return rMaps;
+	}
+
+	/**
+	 * iOS null->nil 0->-0
+	 * @param from 0:Android 9:iOS
+	 * @param map
+	 * @return
+	 */
+	public static Map<String, Object> mapData(Map<String, Object> map) {
+		for (Map.Entry<String, Object> itm : map.entrySet()) {
+			if (itm.getValue() == null) {
+				itm.setValue("nil");
+			}
+			else {
+				if (itm.getValue() instanceof Integer) {
+					int v = (int) itm.getValue();
+					if (v == 0)
+						itm.setValue("0");
 				}
-				// else {
-				// if (itm.getValue() instanceof Integer) {
-				// int v = (int) itm.getValue();
-				// if (v == 0)
-				// map.put(itm.getKey(), -v);
-				// }
-				// }
 			}
 		}
 		return map;
