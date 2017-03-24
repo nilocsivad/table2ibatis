@@ -3,6 +3,10 @@
  */
 package ${package_util};
 
+import java.util.Random;
+
+import org.apache.commons.codec.binary.Base64;
+
 import ${package_ref}.RandomString;
 
 /**

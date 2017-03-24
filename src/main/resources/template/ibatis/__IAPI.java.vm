@@ -6,12 +6,13 @@ package ${package_iapi};
 import java.util.List;
 import java.util.Map;
 
+import ${package_c}.IAPP;
 import ${package_ref}.DataGridModel;
 
 /**
  * @author Colin
  */
-public interface __IAPI<T> {
+public interface __IAPI<T> extends IAPP {
 
 	public Object saveMulti(String sqlMapID, Object obj);
 

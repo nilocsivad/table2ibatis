@@ -70,59 +70,22 @@ public class __PhoneRequest extends __Request {
 			return 1; /// 非登录请求 ///
 		}
 
-
-		String[] arr = { UserModel.KEY_ID, UserModel.KEY_TIMELINE, UserModel.KEY_AUTHORIZATIONKEY };
-		UserModel param = UserModel.Make(UserModel.KEY_ID, phoneUID);
-		UserModel one = userService.getOne(UserModel.cols2(arr), param);
-
-
-		/// 用户不存在,需要重新登录 ///
-		if (one == null) {
-
-			map.put(JSON_KEY, 4);
-
-			/// 国际化消息 ///
-			RequestContext reqCtx = new RequestContext(request);
-			String content = reqCtx.getMessage("login_timeout");
-			map.put(JSON_MSG, content);
-			return 4;
-
-		}
-
-		/// 登录验证码不正确,需要重新登录 ///
-		if (one.getAuthorizationKey().equals(uniqueCode) == false) {
-
-			map.put(JSON_KEY, 4);
-
-			/// 国际化消息 ///
-			RequestContext reqCtx = new RequestContext(request);
-			String content = reqCtx.getMessage("login_timeout");
-			map.put(JSON_MSG, content);
-			return 4;
-
-		}
-
-		/// 登录超时,需要重新登录 ///
-		Calendar c = new GregorianCalendar();
-		c.add(Calendar.DATE, 0 - ConstUtil.getMobileAuthorization());
-		String timeline = DTUtil.formatDT(DTUtil.FMT_DEFAULT, new Date(c.getTimeInMillis()));
-		if (one.getTimeline().compareTo(timeline) <= 0) {
-			// System.out.println(one.getTimeline() + " --- " + timeline);
-			map.put(JSON_KEY, 4);
-
-			/// 国际化消息 ///
-			RequestContext reqCtx = new RequestContext(request);
-			String content = reqCtx.getMessage("login_timeout");
-			map.put(JSON_MSG, content);
-			return 4;
-
-		}
-
-
-		/// 变更最后一次请求时间,以便统计在线人数 ///
-		String[] arrToDB = { UserModel.KEY_ID, UserModel.KEY_TIMELINE };
-		param = UserModel.Make(arrToDB, phoneUID, DTUtil.nowDT());
-		userService.update(param);
+		// /// 登录超时,需要重新登录 ///
+		// Calendar c = new GregorianCalendar();
+		// c.add(Calendar.DATE, 0 - ConstUtil.getMobileAuthorization());
+		// String timeline = DTUtil.formatDT(DTUtil.FMT_DEFAULT, new
+		// Date(c.getTimeInMillis()));
+		// if (one.getTimeline().compareTo(timeline) <= 0) {
+		// // System.out.println(one.getTimeline() + " --- " + timeline);
+		// map.put(JSON_KEY, 4);
+		//
+		// /// 国际化消息 ///
+		// RequestContext reqCtx = new RequestContext(request);
+		// String content = reqCtx.getMessage("login_timeout");
+		// map.put(JSON_MSG, content);
+		// return 4;
+		//
+		// }
 
 		return 1;
 

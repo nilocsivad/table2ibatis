@@ -39,4 +39,25 @@ public class ConstUtil {
 		return MAP_DATA.get("resourcePath");
 	}
 
+
+
+
+
+
+
+
+	/**
+	 * /// 手机用户多久需重新登录,验证码有效期 ///
+	 */
+	public static int getMobileAuthorization() {
+		return NUM_MAP_DATA.get("mobileAuthorization");
+	}
+
+
+
+
+
+
+
+
 }
