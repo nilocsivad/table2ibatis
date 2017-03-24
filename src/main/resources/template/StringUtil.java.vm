@@ -18,7 +18,7 @@ public class StringUtil {
 
 	public static final synchronized String getUniqueID() {
 		long lTimeMillis = System.currentTimeMillis();
-		return String.format("%#017x-%s", lTimeMillis, new RandomString(32));
+		return String.format("%#014x-%s", lTimeMillis, new RandomString(35));
 	}
 
 	public static final String enc64(String text) {
