@@ -42,7 +42,7 @@ public class StringUtil {
 	 */
 	public static String toPath(String folder) {
 		if (EmptyUtil.notEmpty(folder))
-			return folder.replace(" ", "_").replace("\\", "_").replace("/", "_").replace(":", "_").replace("*", "_").replace("?", "_").replace("'", "_").replace("\"", "_").replace("<", "_").replace(">", "_").replace("|", "_").replace("!", "_").replace("@", "_").replace("#", "_").replace("$", "_").replace("%", "_").replace("^", "_").replace("&", "_").replace("(", "_").replace(")", "_").replace("`", "_").replace("~", "_").replace(";", "_").replace(",", "_").replace(".", "_").replace("=", "_").replace("+", "_");
+			return folder.replace(" ", "_").replace("\\", "_").replace(":", "_").replace("*", "_").replace("?", "_").replace("'", "_").replace("\"", "_").replace("<", "_").replace(">", "_").replace("|", "_").replace("!", "_").replace("@", "_").replace("#", "_").replace("$", "_").replace("%", "_").replace("^", "_").replace("&", "_").replace("(", "_").replace(")", "_").replace("`", "_").replace("~", "_").replace(";", "_").replace(",", "_").replace(".", "_").replace("=", "_").replace("+", "_");
 		return folder;
 	}
 
