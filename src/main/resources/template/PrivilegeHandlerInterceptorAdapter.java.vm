@@ -67,16 +67,17 @@ public class PrivilegeHandlerInterceptorAdapter extends HandlerInterceptorAdapte
 				return true;
 			}
 			
-
-			if (className.startsWith(REQ)) {
-				// <backend-control-area>
-				return this.controlURL(request, response, ONLINE_REQ);
-				// </backend-control-area>
+			
+			if (className.startsWith(PHONE)) {
+				return true;
 			}
-			else if (className.startsWith(WEB)) {
-				// <facade-control-area>
-				return this.controlURL(request, response, ONLINE_WEB);
-				// </facade-control-area>
+
+			
+			if (className.startsWith(REQ)) {
+				return this.controlURL(request, response, ONLINE_REQ, "/req");
+			}
+			if (className.startsWith(WEB)) {
+				return this.controlURL(request, response, ONLINE_WEB, "/web");
 			}
 
 			return false;
@@ -91,9 +92,10 @@ public class PrivilegeHandlerInterceptorAdapter extends HandlerInterceptorAdapte
 	 * @return
 	 * @throws IOException
 	 */
-	private boolean controlURL(HttpServletRequest request, HttpServletResponse response, String sessionKey) throws IOException {
+	private boolean controlURL(HttpServletRequest request, HttpServletResponse response, String sessionKey, String toDefaultView) throws IOException {
 
-		String contextPath = request.getContextPath();
+		String contextPath = request.getContextPath() + toDefaultView;
+		contextPath = contextPath.replace("//", "/");
 
 		HttpSession httpSession = request.getSession(false);
 		// ** 未登录则不通过
