@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import ${package_ref}.DataGridModel;
 
 @Repository
-@SuppressWarnings("deprecation")
 public class DAOImpl<T> extends SqlMapClientTemplate implements IDAO<T> {
 
 	@Override
@@ -51,25 +50,21 @@ public class DAOImpl<T> extends SqlMapClientTemplate implements IDAO<T> {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public T getOne(String sqlMapID) {
 		return (T) queryForObject(sqlMapID);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public T getOne(String sqlMapID, Object obj) {
 		return (T) queryForObject(sqlMapID, obj);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<T> getList(String sqlMapID) {
 		return queryForList(sqlMapID);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<T> getList(String sqlMapID, Object obj) {
 		return queryForList(sqlMapID, obj);
 	}
@@ -108,7 +103,7 @@ public class DAOImpl<T> extends SqlMapClientTemplate implements IDAO<T> {
 		Object sum = super.queryForObject(sqlMapCountID, map);
 		if (sum == null) {
 			result.put("total", 0);
-			result.put("rows", new ArrayList<Object>());
+			result.put("rows", new ArrayList());
 			return result;
 		}
 		long totalsum = (long) sum;

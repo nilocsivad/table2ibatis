@@ -3,28 +3,16 @@
  */
 package ${package_api};
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.web.servlet.support.RequestContext;
-
 import ${package_database}.IDAO;
 import ${package_iapi}.__IAPI;
-import ${package_model}.__Model;
 import ${package_ref}.DataGridModel;
-import ${package_ref}.RandomString;
 import ${package_util}.ConstUtil;
 import ${package_util}.MapUtil;
-import ${package_util}.StringUtil;
 
 /**
  * @author Colin
@@ -39,20 +27,11 @@ public abstract class __APIDefaultImpl<T> implements __IAPI<T> {
 	}
 
 	protected abstract IDAO<T> getDAO();
-
+	
 	protected abstract String getPrefixOfSqlMapID();
 
-	private RequestContext reqCtx;
 
 
-
-
-	protected String getMessage(HttpServletRequest request, String key) {
-		if (reqCtx == null) {
-			reqCtx = new RequestContext(request);
-		}
-		return reqCtx.getMessage(key);
-	}
 
 	protected String getHttpProj(HttpServletRequest request) {
 		int port = request.getServerPort();
@@ -76,69 +55,6 @@ public abstract class __APIDefaultImpl<T> implements __IAPI<T> {
 
 	protected double toDb(String txt) {
 		return Double.parseDouble(txt);
-	}
-
-	protected String suffix(String file) {
-		int index = file.lastIndexOf(".");
-		if (index < 0) {
-			return "";
-		}
-		return file.substring(index);
-	}
-
-	protected void translateData(Map<String, Object> map, int from, String[] columns, List<?> listData) {
-		this.translateData(map, from, columns, JSON_RESULT, listData);
-	}
-
-	protected void translateData(Map<String, Object> map, int from, String[] columns, String key, List<?> listData) {
-		try {
-			map.put(key, MapUtil.toMapList2(from, listData, columns));
-		}
-		catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			map.put(key, listData);
-			e.printStackTrace();
-		}
-	}
-
-	protected void translateData(Map<String, Object> map, int from, String[] columns, __Model oneData) {
-		this.translateData(map, from, columns, JSON_RESULT, oneData);
-	}
-
-	protected void translateData(Map<String, Object> map, int from, String[] columns, String key, __Model oneData) {
-		try {
-			map.put(key, MapUtil.toMap2(from, oneData, columns));
-		}
-		catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			map.put(key, oneData);
-			e.printStackTrace();
-		}
-	}
-
-	protected String storageImage(String folder, InputStream imageStream, String suffix) throws FileNotFoundException, IOException {
-
-		folder = StringUtil.toPath(folder);
-
-		String folderPath = ConstUtil.getResourcePath(); /// E:\resource or /appdata/resource
-		File folderRes = new File(folderPath, folder);
-		if (folderRes.exists() == false) {
-			folderRes.mkdirs();
-		}
-
-
-		String fileName = String.format("%014Xd-%s%s", System.currentTimeMillis(), new RandomString(14), suffix);
-		File fileImage = new File(folderRes, fileName);
-
-		BufferedInputStream input = new BufferedInputStream(imageStream);
-		BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(fileImage));
-		int len = 0;
-		byte[] buf = new byte[1024 * 24]; /// 24k ///
-		while ((len = input.read(buf)) > 0) {
-			output.write(buf, 0, len);
-		}
-		input.close();
-		output.close();
-
-		return folder + "/" + fileName;
 	}
 
 
@@ -201,30 +117,15 @@ public abstract class __APIDefaultImpl<T> implements __IAPI<T> {
 		}
 		return this.getDAO().delete(sqlMapID, obj);
 	}
-	
-	@Override
-	public T getOneByPK(String[] columns, Object obj) {
-		return this.getOneByPK(__Model.cols2(columns), obj);
-	}
 
 	@Override
 	public T getOneByPK(String columns, Object obj) {
 		return this.getOne(columns, this.getPrefixOfSqlMapID() + "getOneByPK", obj);
 	}
-	
-	@Override
-	public T getOne(String[] columns, Object obj) {
-		return this.getOne(__Model.cols2(columns), obj);
-	}
 
 	@Override
 	public T getOne(String columns, Object obj) {
 		return this.getOne(columns, this.getPrefixOfSqlMapID() + "getOne", obj);
-	}
-	
-	@Override
-	public T getOne(String[] columns, String sqlMapID, Object obj) {
-		return this.getOne(__Model.cols2(columns), sqlMapID, obj);
 	}
 
 	@Override
@@ -232,20 +133,10 @@ public abstract class __APIDefaultImpl<T> implements __IAPI<T> {
 		Map<String, Object> map = MapUtil.mapThem(new String[] { "columns", "param" }, columns, obj);
 		return this.getDAO().getOne(sqlMapID, map);
 	}
-	
-	@Override
-	public List<T> getList(String[] columns, Object obj) {
-		return this.getList(__Model.cols2(columns), obj);
-	}
 
 	@Override
 	public List<T> getList(String columns, Object obj) {
 		return this.getList(columns, this.getPrefixOfSqlMapID() + "getList", obj);
-	}
-	
-	@Override
-	public List<T> getList(String[] columns, String sqlMapID, Object obj) {
-		return this.getList(__Model.cols2(columns), sqlMapID, obj);
 	}
 
 	@Override
@@ -253,22 +144,12 @@ public abstract class __APIDefaultImpl<T> implements __IAPI<T> {
 		Map<String, Object> map = MapUtil.mapThem(new String[] { "columns", "param" }, columns, obj);
 		return this.getDAO().getList(sqlMapID, map);
 	}
-	
-	@Override
-	public List<T> getListByMap(String[] columns, Map<String, Object> map) {
-		return this.getListByMap(__Model.cols2(columns), map);
-	}
 
 	@Override
 	public List<T> getListByMap(String columns, Map<String, Object> map) {
 		return this.getListByMap(columns, this.getPrefixOfSqlMapID() + "getList", map);
 	}
 	
-	@Override
-	public List<T> getListByMap(String[] columns, String sqlMapID, Map<String, Object> map) {
-		return this.getListByMap(__Model.cols2(columns), sqlMapID, map);
-	}
-
 	@Override
 	public List<T> getListByMap(String columns, String sqlMapID, Map<String, Object> map) {
 		map.put("columns", columns);
@@ -299,22 +180,12 @@ public abstract class __APIDefaultImpl<T> implements __IAPI<T> {
 	public Map<String, Object> getPageList(String columns, DataGridModel dgm, T model) {
 		return this.getPageList(columns, this.getPrefixOfSqlMapID() + "getPageList", this.getPrefixOfSqlMapID() + "getCountLongMap", dgm, model);
 	}
-	
-	@Override
-	public Map<String, Object> getPageList(String[] columns, String sqlMapSelectID, String sqlMapCountID, DataGridModel dgm, T model) {
-		return this.getPageList(__Model.cols2(columns), sqlMapSelectID, sqlMapCountID, dgm, model);
-	}
 
 	@Override
 	public Map<String, Object> getPageList(String columns, String sqlMapSelectID, String sqlMapCountID, DataGridModel dgm, T model) {
 		return this.getPageList(columns, sqlMapSelectID, sqlMapCountID, dgm, model, null);
 	}
 
-	@Override
-	public Map<String, Object> getPageList(String[] columns, String sqlMapSelectID, String sqlMapCountID, DataGridModel dgm, T model, Map<String, Object> map) {
-		return this.getPageList(__Model.cols2(columns), sqlMapSelectID, sqlMapCountID, dgm, model, map);
-	}
-	
 	@Override
 	public Map<String, Object> getPageList(String columns, String sqlMapSelectID, String sqlMapCountID, DataGridModel dgm, T model, Map<String, Object> map) {
 		return this.getDAO().getPageList(columns, sqlMapSelectID, sqlMapCountID, dgm, model, map);

@@ -132,7 +132,7 @@
 		<dynamic prepend="SET">	
 #foreach( $itm in $table.columns )
 #if( ${itm.primayKey} == false ) 
-			<isNotNull prepend="," property="${itm.name}"> ${itm.name} = #${itm.name}# </isNotNull>
+			<isNotEmpty prepend="," property="${itm.name}"> ${itm.name} = #${itm.name}# </isNotEmpty>
 #end
 #end			
 		</dynamic>
@@ -146,7 +146,7 @@
 		<dynamic prepend="SET">	
 #foreach( $itm in $table.columns )
 #if( ${itm.primayKey} == false ) 
-			<isNotNull prepend="," property="to.${itm.name}"> ${itm.name} = #to.${itm.name}# </isNotNull>
+			<isNotEmpty prepend="," property="to.${itm.name}"> ${itm.name} = #to.${itm.name}# </isNotEmpty>
 #end
 #end			
 		</dynamic>
@@ -193,16 +193,16 @@
 #end
 #end
 		</dynamic>
-		<isNotNull property="sort">
+		<isNotEmpty property="sort">
 		<isNotEmpty property="sort"> 
 			ORDER BY $sort$ $order$
 		</isNotEmpty>
-		</isNotNull>
-		<isNotNull property="length">
+		</isNotEmpty>
+		<isNotEmpty property="length">
 		<isNotEmpty property="length"> 
 			LIMIT $length$
 		</isNotEmpty>
-		</isNotNull>
+		</isNotEmpty>
 	</select>
 	
 	<select id="${bean}Model.getCountInt" resultClass="int">
