@@ -7,10 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.web.servlet.support.RequestContext;
-
 import ${package_request}.__Request;
-import ${package_util}.EmptyUtil;
 
 /**
  * @author Colin
@@ -33,22 +30,22 @@ public class __PhoneRequest extends __Request {
 
 		boolean b = true; /// 默认所有参数非空 ///
 
-		for (String p : param) {
-
-			if (b)
-				b = EmptyUtil.notEmpty(p);
-
-			if (b == false) { /// 如果上一步检测到空参数,则直接break ///
-
-				map.put(JSON_KEY, 2);
-
-				/// 国际化消息 ///
-				RequestContext reqCtx = new RequestContext(request);
-				String content = reqCtx.getMessage("parameter_include_null");
-				map.put(JSON_MSG, content);
-				break;
-			}
-		}
+		// for (String p : param) {
+		//
+		// if (b)
+		// b = EmptyUtil.notEmpty(p);
+		//
+		// if (b == false) { /// 如果上一步检测到空参数,则直接break ///
+		//
+		// map.put(JSON_KEY, 2);
+		//
+		// /// 国际化消息 ///
+		// RequestContext reqCtx = new RequestContext(request);
+		// String content = reqCtx.getMessage("parameter_include_null");
+		// map.put(JSON_MSG, content);
+		// break;
+		// }
+		// }
 
 		return b;
 	}
