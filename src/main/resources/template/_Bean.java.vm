@@ -4,6 +4,7 @@
 package ${package_model};
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -73,39 +74,36 @@ public class ${bean}Model extends __Model {
 		return (name.charAt(0) + "").toUpperCase() + name.substring(1);
 	}
 
-	public static ${bean}Model Make(String cols, Object... vals) {
+	public static ${bean}Model Make(String cols, Object... vals)
+			throws NoSuchFieldException, SecurityException,
+			NoSuchMethodException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
 		return Make(cols.split(","), vals);
 	}
 	
-	public static ${bean}Model Make(String[] fields, Object... vals) {
+	public static ${bean}Model Make(String[] fields, Object... vals)
+			throws NoSuchFieldException, SecurityException,
+			NoSuchMethodException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
 		${bean}Model instance = new ${bean}Model();
-		try {
 
-			Class<?> cls = instance.getClass();
+		Class<?> cls = instance.getClass();
 
-			for (int i = 0, l = fields.length; l > i; ++i) {
-				String field = fields[i].trim();
-				try {
-					Field fd = cls.getDeclaredField(field);
-					if (fd != null) {
-						Method method = cls.getDeclaredMethod("set" + getMethodName(field), fd.getType());
-						if (method != null) {
-							method.invoke(instance, vals[i]);
-						}
-						// fd.setAccessible(true);
-						// fd.set(instance, vals[i]);
-						// fd.setAccessible(false);
-					}
+		for (int i = 0, l = fields.length; l > i; ++i) {
+			String field = fields[i].trim();
+			Field fd = cls.getDeclaredField(field);
+			if (fd != null) {
+				Method method = cls.getDeclaredMethod(
+						"set" + getMethodName(field), fd.getType());
+				if (method != null) {
+					method.invoke(instance, vals[i]);
 				}
-				// catch (NoSuchFieldException e) {
-				catch (NoSuchMethodException e) {
-					e.printStackTrace();
-				}
+				// fd.setAccessible(true);
+				// fd.set(instance, vals[i]);
+				// fd.setAccessible(false);
 			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
+		
 		return instance;
 	}
 	
