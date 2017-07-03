@@ -23,6 +23,7 @@ public class TableDefine {
 
 	public String name;
 	public String primaryKey;
+	public String primaryKeyType;
 	public String comment;
 	public List<ColumnDefine> columns = new ArrayList<ColumnDefine>(8);
 

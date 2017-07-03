@@ -17,7 +17,7 @@
 		<include refid="TABLE_${beanUpper}" />
 		<dynamic prepend="(" close=")">
 #foreach( $itm in $table.columns )
-#if( ${itm.primayKey} == false ) 
+#if( ${itm.autoIncrement} == false ) 
 			<isNotEmpty property="${itm.name}" prepend=","> ${itm.name} </isNotEmpty>
 #end
 #end
@@ -25,14 +25,15 @@
 		VALUES
 		<dynamic prepend="(" close=")">
 #foreach( $itm in $table.columns )
-#if( ${itm.primayKey} == false ) 
+#if( ${itm.autoIncrement} == false ) 
 			<isNotEmpty property="${itm.name}" prepend=","> #${itm.name}# </isNotEmpty>
 #end
 #end
 		</dynamic>
 	</insert>
 
-#if( ${hasPrimaryKey} == true )
+
+#if( ${hasPrimaryKey} == true and ${primaryKeyType} != "String" )
 	<insert id="${bean}Model.saveReturnInt" parameterClass="${bean}Model">
 		INSERT INTO
 		<include refid="TABLE_${beanUpper}" />
@@ -55,9 +56,8 @@
 			SELECT LAST_INSERT_ID() AS ${primaryKey}    
 	    </selectKey>
 	</insert>
-#end
-
-#if( ${hasPrimaryKey} == true )
+	
+	
 	<insert id="${bean}Model.saveReturnLong" parameterClass="${bean}Model">
 		INSERT INTO
 		<include refid="TABLE_${beanUpper}" />
@@ -80,6 +80,7 @@
 			SELECT LAST_INSERT_ID() AS ${primaryKey}    
 	    </selectKey>
 	</insert>
+#end
 	
 	
 	
@@ -103,7 +104,6 @@
 #end
 		</dynamic>
 	</delete>
-#end
 
 #if( ${hasPrimaryKey} == true )
 	<delete id="${bean}Model.deleteByIDs" parameterClass="java.util.Map">
@@ -111,7 +111,7 @@
 		<include refid="TABLE_${beanUpper}" />
 		WHERE
 		<iterate conjunction="OR" open="(" close=")" property="array">
-			${primaryKey} = ${__4}array[]${__4}
+			${primaryKey} = #array[]#
 		</iterate>
 #foreach( $itm in $table.columns )
 #if( ${itm.primayKey} == false ) 
@@ -193,16 +193,6 @@
 #end
 #end
 		</dynamic>
-		<isNotEmpty property="sort">
-		<isNotEmpty property="sort"> 
-			ORDER BY $sort$ $order$
-		</isNotEmpty>
-		</isNotEmpty>
-		<isNotEmpty property="length">
-		<isNotEmpty property="length"> 
-			LIMIT $length$
-		</isNotEmpty>
-		</isNotEmpty>
 	</select>
 	
 	<select id="${bean}Model.getCountInt" resultClass="int">

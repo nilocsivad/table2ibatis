@@ -7,8 +7,6 @@ import java.util.Random;
 
 import org.apache.commons.codec.binary.Base64;
 
-import ${package_ref}.RandomString;
-
 /**
  * @author Colin
  */
@@ -18,11 +16,6 @@ public class StringUtil {
 	 * 
 	 */
 	private StringUtil() {
-	}
-
-	public static final synchronized String getUniqueID() {
-		long lTimeMillis = System.currentTimeMillis();
-		return String.format("%#014x-%s", lTimeMillis, new RandomString(35));
 	}
 
 	public static final String enc64(String text) {
