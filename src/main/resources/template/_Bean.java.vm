@@ -67,7 +67,7 @@ public class ${bean}Model extends __Model {
 	/**
 	 * 
 	 */
-	public ${bean}Model new${bean}() {
+	public static ${bean}Model newInstance() {
 		${bean}Model instance = new ${bean}Model();
 		instance.${primaryKey} = IDUtil.newUniqueID();
 		return instance;

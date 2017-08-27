@@ -106,7 +106,7 @@
 	</delete>
 
 #if( ${hasPrimaryKey} == true )
-	<delete id="${bean}Model.deleteByIDs" parameterClass="java.util.Map">
+	<delete id="${bean}Model.deleteByIDs" parameterClass="java.util.HashMap">
 		DELETE FROM
 		<include refid="TABLE_${beanUpper}" />
 		WHERE
@@ -229,7 +229,7 @@
 		</dynamic>
 	</select>
 	
-	<select id="${bean}Model.getPageList" remapResults="true" resultClass="${bean}Model" parameterClass="java.util.Map">
+	<select id="${bean}Model.getPageList" remapResults="true" resultClass="${bean}Model" parameterClass="java.util.HashMap">
 		SELECT ${__4}columns${__4} FROM
 		<include refid="TABLE_${beanUpper}" />
 		<dynamic prepend="WHERE">
@@ -242,6 +242,25 @@
 		ORDER BY $sort$ $order$
 		LIMIT $begin$, $end$
 	</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<resultMap class="${bean}Model" id="${bean}Model.ResultMap">
+#foreach( $itm in $table.columns )
+		<result property="${itm.name}" column="${itm.name.toUpperCase()}" />
+#end
+	</resultMap>
 
 
 
