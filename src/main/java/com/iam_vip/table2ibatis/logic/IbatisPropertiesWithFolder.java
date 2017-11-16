@@ -486,7 +486,7 @@ public class IbatisPropertiesWithFolder extends PropertiesWithFolder {
 			for (TableDefine td : list) {
 
 				String bean = rule != null ? rule.translateIt(td.name) : td.name;
-				File toFile = new File(toFolder, XML_PREFIX + td.name + ".xml");
+				File toFile = new File(toFolder, XML_PREFIX + rule.replaceIt(td.name) + ".xml");
 
 				context.put("table", td);
 				context.put("hasPrimaryKey", (td.primaryKey != null));

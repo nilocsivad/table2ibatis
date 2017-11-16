@@ -4,6 +4,7 @@
 package ${package_util};
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -46,6 +47,16 @@ public class DTUtil {
 	public static String formatDT(String fmt, Date date) {
 
 		return getFmt(fmt).format(date);
+	}
+
+	public static Date parseDT(String fmt, String date) {
+		try {
+			return getFmt(fmt).parse(date);
+		}
+		catch (ParseException e) {
+			e.printStackTrace();
+			return new Date();
+		}
 	}
 
 	public static DateFormat getFmt(String fmt) {

@@ -3,16 +3,29 @@
  */
 package ${package_api};
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.web.servlet.support.RequestContext;
 
 import ${package_database}.IDAO;
 import ${package_iapi}.__IAPI;
+import ${package_model}.__Model;
 import ${package_ref}.DataGridModel;
 import ${package_util}.ConstUtil;
 import ${package_util}.MapUtil;
+import ${package_util}.StringUtil;
 
 /**
  * @author Colin
@@ -27,11 +40,20 @@ public abstract class __APIDefaultImpl<T> implements __IAPI<T> {
 	}
 
 	protected abstract IDAO<T> getDAO();
-	
+
 	protected abstract String getPrefixOfSqlMapID();
 
+	private RequestContext reqCtx;
 
 
+
+
+	protected String getMessage(HttpServletRequest request, String key) {
+		if (reqCtx == null) {
+			reqCtx = new RequestContext(request);
+		}
+		return reqCtx.getMessage(key);
+	}
 
 	protected String getHttpProj(HttpServletRequest request) {
 		int port = request.getServerPort();
@@ -41,7 +63,8 @@ public abstract class __APIDefaultImpl<T> implements __IAPI<T> {
 
 	protected String getHttpResource(HttpServletRequest request) {
 		int port = request.getServerPort();
-		String http = request.getServerName() + (port == 80 ? "" : ":" + port) + "/" + ConstUtil.getResourcePrefix() + "/";
+		String http = request.getServerName() + (port == 80 ? "" : ":" + port) + "/" + ConstUtil.getResourcePrefix()
+				+ "/";
 		return request.getScheme() + "://" + http.replace("//", "/");
 	}
 
@@ -55,6 +78,43 @@ public abstract class __APIDefaultImpl<T> implements __IAPI<T> {
 
 	protected double toDb(String txt) {
 		return Double.parseDouble(txt);
+	}
+
+	protected String suffix(String file) {
+		int index = file.lastIndexOf(".");
+		if (index < 0) {
+			return "";
+		}
+		return file.substring(index);
+	}
+
+	protected String storageImage(String folder, InputStream imageStream, String suffix)
+			throws FileNotFoundException, IOException {
+
+		folder = StringUtil.toPath(folder);
+
+		/// E:\resource or /appdata/resource
+		String folderPath = ConstUtil.getResourcePath(); 
+		File folderRes = new File(folderPath, folder);
+		if (folderRes.exists() == false) {
+			folderRes.mkdirs();
+		}
+
+
+		String fileName = String.format("%s%s", StringUtil.getUniqueID(), suffix);
+		File fileImage = new File(folderRes, fileName);
+
+		BufferedInputStream input = new BufferedInputStream(imageStream);
+		BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(fileImage));
+		int len = 0;
+		byte[] buf = new byte[1024 * 24]; /// 24k ///
+		while ((len = input.read(buf)) > 0) {
+			output.write(buf, 0, len);
+		}
+		input.close();
+		output.close();
+
+		return folder + "/" + fileName;
 	}
 
 
@@ -119,8 +179,18 @@ public abstract class __APIDefaultImpl<T> implements __IAPI<T> {
 	}
 
 	@Override
+	public T getOneByPK(String[] columns, Object obj) {
+		return this.getOneByPK(__Model.cols2(columns), obj);
+	}
+
+	@Override
 	public T getOneByPK(String columns, Object obj) {
 		return this.getOne(columns, this.getPrefixOfSqlMapID() + "getOneByPK", obj);
+	}
+
+	@Override
+	public T getOne(String[] columns, Object obj) {
+		return this.getOne(__Model.cols2(columns), obj);
 	}
 
 	@Override
@@ -129,8 +199,24 @@ public abstract class __APIDefaultImpl<T> implements __IAPI<T> {
 	}
 
 	@Override
+	public T getOne(String[] columns, String sqlMapID, Object obj) {
+		return this.getOne(__Model.cols2(columns), sqlMapID, obj);
+	}
+
+	@Override
 	public T getOne(String columns, String sqlMapID, Object obj) {
 		Map<String, Object> map = MapUtil.mapThem(new String[] { "columns", "param" }, columns, obj);
+		return this.getDAO().getOne(sqlMapID, map);
+	}
+	
+	@Override
+	public T getOneByMap(String[] columns, String sqlMapID, Map<String, Object> map) {
+		return this.getOneByMap(__Model.cols2(columns), sqlMapID, map);
+	}
+	
+	@Override
+	public T getOneByMap(String columns, String sqlMapID, Map<String, Object> map) {
+		map.put("columns", columns);
 		return this.getDAO().getOne(sqlMapID, map);
 	}
 
@@ -174,21 +260,6 @@ public abstract class __APIDefaultImpl<T> implements __IAPI<T> {
 	@Override
 	public Long getCountLong(String sqlMapID, Object param) {
 		return this.getDAO().getCountLong(sqlMapID, param);
-	}
-
-	@Override
-	public Map<String, Object> getPageList(String columns, DataGridModel dgm, T model) {
-		return this.getPageList(columns, this.getPrefixOfSqlMapID() + "getPageList", this.getPrefixOfSqlMapID() + "getCountLongMap", dgm, model);
-	}
-
-	@Override
-	public Map<String, Object> getPageList(String columns, String sqlMapSelectID, String sqlMapCountID, DataGridModel dgm, T model) {
-		return this.getPageList(columns, sqlMapSelectID, sqlMapCountID, dgm, model, null);
-	}
-
-	@Override
-	public Map<String, Object> getPageList(String columns, String sqlMapSelectID, String sqlMapCountID, DataGridModel dgm, T model, Map<String, Object> map) {
-		return this.getDAO().getPageList(columns, sqlMapSelectID, sqlMapCountID, dgm, model, map);
 	}
 
 

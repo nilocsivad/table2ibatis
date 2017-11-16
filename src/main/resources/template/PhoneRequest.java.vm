@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -30,8 +29,8 @@ public class ${bean}PhoneRequest extends __PhoneRequest implements IAPP {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = { "l{ver}/{from}/list/data" })
-	public Map<String, Object> listData(@PathVariable int ver, @PathVariable int from, HttpServletRequest request) throws Exception {
+	@RequestMapping(value = { "data" })
+	public Map<String, Object> data(HttpServletRequest request) throws Exception {
 		Map<String, Object> map = MapUtil.mapThem(new String[] { "datetime" }, DTUtil.nowDT());
 		return map;
 	}

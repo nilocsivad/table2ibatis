@@ -16,7 +16,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import ${package_c}.IAPP;
 import ${package_util}.DTUtil;
-import ${package_util}.MethodUtil;
 
 /**
  * @author Colin
@@ -63,30 +62,22 @@ public class PrivilegeHandlerInterceptorAdapter extends HandlerInterceptorAdapte
 			buf.append("is from phone ? " + (userAgent != null && userAgent.contains("Android") ? "Android" : "") + (userAgent != null && userAgent.contains("iPhone") ? "iOS" : "") + " \t\t Request at: " + DTUtil.nowDT());
 			System.out.println(buf);
 
-			{ // ** 过滤掉配置忽略的请求
-				boolean ignore = false;
-				String all = className + "." + methodName;
-				for (String line : MethodUtil.getIgnoreMethods()) {
-					boolean r = line.endsWith("*") ? all.startsWith(line.substring(0, line.length() - 1)) : all.equals(line);
-					if (r) {
-						ignore = true;
-						break;
-					}
-				}
-				if (ignore) {
-					return true;
-				}
+
+			if (methodName.endsWith("_$")) { /// 后缀为 _$ 不用验证 session ///
+				return true;
+			}
+			
+			
+			if (className.startsWith(PHONE)) {
+				return true;
 			}
 
+			
 			if (className.startsWith(REQ)) {
-				// <backend-control-area>
-				return this.controlURL(request, response, ONLINE_REQ);
-				// </backend-control-area>
+				return this.controlURL(request, response, ONLINE_REQ, "/req");
 			}
-			else if (className.startsWith(WEB)) {
-				// <facade-control-area>
-				return this.controlURL(request, response, ONLINE_WEB);
-				// </facade-control-area>
+			if (className.startsWith(WEB)) {
+				return this.controlURL(request, response, ONLINE_WEB, "/web");
 			}
 
 			return false;
@@ -101,9 +92,10 @@ public class PrivilegeHandlerInterceptorAdapter extends HandlerInterceptorAdapte
 	 * @return
 	 * @throws IOException
 	 */
-	private boolean controlURL(HttpServletRequest request, HttpServletResponse response, String sessionKey) throws IOException {
+	private boolean controlURL(HttpServletRequest request, HttpServletResponse response, String sessionKey, String toDefaultView) throws IOException {
 
-		String contextPath = request.getContextPath();
+		String contextPath = request.getContextPath() + toDefaultView;
+		contextPath = contextPath.replace("//", "/");
 
 		HttpSession httpSession = request.getSession(false);
 		// ** 未登录则不通过

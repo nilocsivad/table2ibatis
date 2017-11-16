@@ -25,27 +25,28 @@ public class __PhoneRequest extends __Request {
 
 	/**
 	 * 非空检测
-	 * @param map 验证失败返回内容 {"sign":0,"message":"参数有空值!"}
-	 * @param param 任意长度字符串参数
+	 * @param map 验证失败返回内容 {"sign":2,"message":"参数有空值!"}
+	 * @param param 任意参数
 	 * @return true:所有参数均有值 false:部分或全部参数为空
 	 */
-	protected boolean notEmpty(HttpServletRequest request, Map<String, Object> map, String... param) {
+	protected boolean notEmpty(HttpServletRequest request, Map<String, Object> map, Object... param) {
 
 		boolean b = true; /// 默认所有参数非空 ///
 
-		for (String p : param) {
+		for (Object p : param) {
 
-			if (b)
-				b = EmptyUtil.notEmpty(p);
+			if (p == null)
+				b = false;
+
+			if (b) {
+				if (p instanceof String)
+					b = EmptyUtil.notEmpty(p.toString());
+			}
 
 			if (b == false) { /// 如果上一步检测到空参数,则直接break ///
 
 				map.put(JSON_KEY, 2);
-
-				/// 国际化消息 ///
-				RequestContext reqCtx = new RequestContext(request);
-				String content = reqCtx.getMessage("wrong.parameter.content.is.null");
-				map.put(JSON_MSG, content);
+				map.put(JSON_MSG, "parameter_include_null");
 				break;
 			}
 		}

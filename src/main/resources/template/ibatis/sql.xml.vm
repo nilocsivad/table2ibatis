@@ -15,35 +15,72 @@
 	<insert id="${bean}Model.save" parameterClass="${bean}Model">
 		INSERT INTO
 		<include refid="TABLE_${beanUpper}" />
-		( ${table.columnString} )
+		<dynamic prepend="(" close=")">
+#foreach( $itm in $table.columns )
+#if( ${itm.autoIncrement} == false ) 
+			<isNotEmpty property="${itm.name}" prepend=","> ${itm.name} </isNotEmpty>
+#end
+#end
+		</dynamic>
 		VALUES
-		( ${table.columnValueString2} )
+		<dynamic prepend="(" close=")">
+#foreach( $itm in $table.columns )
+#if( ${itm.autoIncrement} == false ) 
+			<isNotEmpty property="${itm.name}" prepend=","> #${itm.name}# </isNotEmpty>
+#end
+#end
+		</dynamic>
 	</insert>
 
-#if( ${hasPrimaryKey} == true )
+
+#if( ${hasPrimaryKey} == true and ${primaryKeyType} != "String" )
 	<insert id="${bean}Model.saveReturnInt" parameterClass="${bean}Model">
 		INSERT INTO
 		<include refid="TABLE_${beanUpper}" />
-		( ${table.columnString} )
+		<dynamic prepend="(" close=")">
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotEmpty property="${itm.name}" prepend=","> ${itm.name} </isNotEmpty>
+#end
+#end
+		</dynamic>
 		VALUES
-		( ${table.columnValueString2} )
+		<dynamic prepend="(" close=")">
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotEmpty property="${itm.name}" prepend=","> #${itm.name}# </isNotEmpty>
+#end
+#end
+		</dynamic>
 		<selectKey resultClass="int" keyProperty="${primaryKey}">
 			SELECT LAST_INSERT_ID() AS ${primaryKey}    
 	    </selectKey>
 	</insert>
-#end
-
-#if( ${hasPrimaryKey} == true )
+	
+	
 	<insert id="${bean}Model.saveReturnLong" parameterClass="${bean}Model">
 		INSERT INTO
 		<include refid="TABLE_${beanUpper}" />
-		( ${table.columnString} )
+		<dynamic prepend="(" close=")">
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotEmpty property="${itm.name}" prepend=","> ${itm.name} </isNotEmpty>
+#end
+#end
+		</dynamic>
 		VALUES
-		( ${table.columnValueString2} )
+		<dynamic prepend="(" close=")">
+#foreach( $itm in $table.columns )
+#if( ${itm.primayKey} == false ) 
+			<isNotEmpty property="${itm.name}" prepend=","> #${itm.name}# </isNotEmpty>
+#end
+#end
+		</dynamic>
 		<selectKey resultClass="long" keyProperty="${primaryKey}">
 			SELECT LAST_INSERT_ID() AS ${primaryKey}    
 	    </selectKey>
 	</insert>
+#end
 	
 	
 	
@@ -61,21 +98,20 @@
 		DELETE FROM
 		<include refid="TABLE_${beanUpper}" />
 		WHERE
-		<dynamic>
+		<dynamic prepend=" ">
 #foreach( $itm in $table.columns )
 			<isNotEmpty property="${itm.name}" prepend="AND"> ${itm.name} = #${itm.name}# </isNotEmpty>
 #end
 		</dynamic>
 	</delete>
-#end
 
 #if( ${hasPrimaryKey} == true )
-	<delete id="${bean}Model.deleteByIDs" parameterClass="java.util.Map">
+	<delete id="${bean}Model.deleteByIDs" parameterClass="java.util.HashMap">
 		DELETE FROM
 		<include refid="TABLE_${beanUpper}" />
 		WHERE
 		<iterate conjunction="OR" open="(" close=")" property="array">
-			${primaryKey} = ${__4}array[]${__4}
+			${primaryKey} = #array[]#
 		</iterate>
 #foreach( $itm in $table.columns )
 #if( ${itm.primayKey} == false ) 
@@ -96,7 +132,7 @@
 		<dynamic prepend="SET">	
 #foreach( $itm in $table.columns )
 #if( ${itm.primayKey} == false ) 
-			<isNotNull prepend="," property="${itm.name}"> ${itm.name} = #${itm.name}# </isNotNull>
+			<isNotEmpty prepend="," property="${itm.name}"> ${itm.name} = #${itm.name}# </isNotEmpty>
 #end
 #end			
 		</dynamic>
@@ -110,7 +146,7 @@
 		<dynamic prepend="SET">	
 #foreach( $itm in $table.columns )
 #if( ${itm.primayKey} == false ) 
-			<isNotNull prepend="," property="to.${itm.name}"> ${itm.name} = #to.${itm.name}# </isNotNull>
+			<isNotEmpty prepend="," property="to.${itm.name}"> ${itm.name} = #to.${itm.name}# </isNotEmpty>
 #end
 #end			
 		</dynamic>
@@ -157,16 +193,6 @@
 #end
 #end
 		</dynamic>
-		<isNotNull property="sort">
-		<isNotEmpty property="sort"> 
-			ORDER BY $sort$ $order$
-		</isNotEmpty>
-		</isNotNull>
-		<isNotNull property="length">
-		<isNotEmpty property="length"> 
-			LIMIT $length$
-		</isNotEmpty>
-		</isNotNull>
 	</select>
 	
 	<select id="${bean}Model.getCountInt" resultClass="int">
@@ -174,9 +200,7 @@
 		<include refid="TABLE_${beanUpper}" />
 		<dynamic prepend="WHERE">
 #foreach( $itm in $table.columns )
-#if( ${itm.primayKey} == false ) 
 			<isNotEmpty property="${itm.name}" prepend="AND"> ${itm.name} = #${itm.name}# </isNotEmpty>
-#end
 #end
 		</dynamic>
 	</select>
@@ -205,7 +229,7 @@
 		</dynamic>
 	</select>
 	
-	<select id="${bean}Model.getPageList" remapResults="true" resultClass="${bean}Model" parameterClass="java.util.Map">
+	<select id="${bean}Model.getPageList" remapResults="true" resultClass="${bean}Model" parameterClass="java.util.HashMap">
 		SELECT ${__4}columns${__4} FROM
 		<include refid="TABLE_${beanUpper}" />
 		<dynamic prepend="WHERE">
@@ -218,6 +242,25 @@
 		ORDER BY $sort$ $order$
 		LIMIT $begin$, $end$
 	</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<resultMap class="${bean}Model" id="${bean}Model.ResultMap">
+#foreach( $itm in $table.columns )
+		<result property="${itm.name}" column="${itm.name.toUpperCase()}" />
+#end
+	</resultMap>
 
 
 
