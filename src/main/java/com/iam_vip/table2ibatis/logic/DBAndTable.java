@@ -147,6 +147,11 @@ public class DBAndTable {
 			col.type = md.getColumnTypeName(i);
 			col.javaType = md.getColumnClassName(i).replace("java.lang.", "");
 			col.isAutoIncrement = md.isAutoIncrement(i);
+			
+			if (col.name.equals(tbl.primaryKey)) {
+				tbl.primaryKeyType = col.javaType;
+			}
+			
 			col.isPrimayKey = (primaryKey != null && primaryKey.equals(col.name));
 			col.canBeNull = md.isNullable(i) == 1 ? true : false;
 			col.len = md.getColumnDisplaySize(i);

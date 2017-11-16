@@ -279,6 +279,9 @@ public class IbatisPropertiesWithFolder extends PropertiesWithFolder {
 			int index = findIt(KEY_PROP, "PATH_PACKAGE_MODEL");
 			String toFolder = PKG_FOLDER[index];
 			String package_model = PKG_CLASS[index];
+			
+			index = findIt(KEY_PROP, "PATH_PACKAGE_UTIL");
+			String package_util = PKG_CLASS[index];
 
 			Template template = Velocity.getTemplate(templatePath, "UTF-8");
 
@@ -293,6 +296,10 @@ public class IbatisPropertiesWithFolder extends PropertiesWithFolder {
 				context.put("comment", td.comment == null ? "" : td.comment);
 				context.put("table", td.name);
 				context.put("bean", bean);
+				context.put("package_util", package_util);
+				context.put("hasPrimaryKey", (td.primaryKey != null));
+				context.put("primaryKey", td.primaryKey);
+				context.put("primaryKeyType", td.primaryKeyType);
 				context.put("cols", td.columns);
 				context.put("all", td.getColumnString(true));
 				context.put("noPK", td.getColumnString());
@@ -484,6 +491,7 @@ public class IbatisPropertiesWithFolder extends PropertiesWithFolder {
 				context.put("table", td);
 				context.put("hasPrimaryKey", (td.primaryKey != null));
 				context.put("primaryKey", td.primaryKey);
+				context.put("primaryKeyType", td.primaryKeyType);
 				context.put("bean", bean);
 				context.put("beanUpper", bean.toUpperCase());
 

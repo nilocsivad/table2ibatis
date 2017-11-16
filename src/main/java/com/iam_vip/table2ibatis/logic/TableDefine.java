@@ -12,7 +12,11 @@ import java.util.List;
 public class TableDefine {
 
 	public interface ITableBeanName {
+
 		String translateIt(String tableName);
+
+		String replaceIt(String text);
+
 	}
 
 	/**
@@ -23,6 +27,7 @@ public class TableDefine {
 
 	public String name;
 	public String primaryKey;
+	public String primaryKeyType;
 	public String comment;
 	public List<ColumnDefine> columns = new ArrayList<ColumnDefine>(8);
 
@@ -55,11 +60,11 @@ public class TableDefine {
 		}
 		return buf.substring(2).toString();
 	}
-	
+
 	public String getColumnValueString2() {
 		return getColumnValueString2(false);
 	}
-	
+
 	public String getColumnValueString2(boolean includePrimaryKey) {
 		StringBuffer buf = new StringBuffer();
 		for (ColumnDefine cd : columns) {
@@ -70,11 +75,11 @@ public class TableDefine {
 		}
 		return buf.substring(2).toString();
 	}
-	
+
 	public String getColumnItemValueString() {
 		return getColumnItemValueString(false);
 	}
-	
+
 	public String getColumnItemValueString(boolean includePrimaryKey) {
 		StringBuffer buf = new StringBuffer();
 		for (ColumnDefine cd : columns) {
