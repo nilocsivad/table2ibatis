@@ -40,10 +40,7 @@ public class __Request implements IAPP {
 	}
 
 	private RequestContext reqCtx;
-
-
-
-
+	
 	protected String getMessage(HttpServletRequest request, String key) {
 		if (reqCtx == null) {
 			reqCtx = new RequestContext(request);

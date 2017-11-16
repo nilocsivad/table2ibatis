@@ -31,7 +31,6 @@ public class IDUtil {
 
 
 
-
 	/**
 	 * /// 生成新唯一时间字符ID /// <br/>
 	 * /// 生成唯一20位字符串编号 /// <br/>
@@ -42,8 +41,6 @@ public class IDUtil {
 		String TIME = DTUtil.formatDT("yyMMddHHmmssSSS");
 		return String.format("%s%s", TIME, getRandomString(5));
 	}
-
-
 
 
 
@@ -60,7 +57,7 @@ public class IDUtil {
 
 
 
-
+	
 
 
 

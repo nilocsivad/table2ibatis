@@ -76,5 +76,5 @@ public interface __IAPI<T> extends IAPP {
 	public Integer getCountInt(T param);
 
 	public Long getCountLong(T param);
-
+	
 }
