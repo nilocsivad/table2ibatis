@@ -30,4 +30,9 @@ public class NameRuleNoUnderline implements ITableBeanName {
 		return buf.toString();
 	}
 
+	@Override
+	public String replaceIt(String text) {
+		return text;
+	}
+
 }

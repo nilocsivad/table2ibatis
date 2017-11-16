@@ -12,7 +12,10 @@ import java.util.List;
 public class TableDefine {
 
 	public interface ITableBeanName {
+		
 		String translateIt(String tableName);
+		
+		String replaceIt(String text);
 	}
 
 	/**
