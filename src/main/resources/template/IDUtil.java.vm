@@ -31,6 +31,16 @@ public class IDUtil {
 
 
 
+	/**
+	 * /// 生成新唯一时间字符ID /// <br/>
+	 * /// 生成唯一20位字符串编号 /// <br/>
+	 * 格式: {yyMMddHHmmssSSS}{5位随机数字} <br/>
+	 * {服务器唯一标识} {@link IDUtil#serverSerializableNo}
+	 */
+	public static final synchronized String newTimeID() {
+		String TIME = DTUtil.formatDT("yyMMddHHmmssSSS");
+		return String.format("%s%s", TIME, getRandomString(5));
+	}
 
 
 
@@ -47,7 +57,7 @@ public class IDUtil {
 
 
 
-
+	
 
 
 

@@ -77,6 +77,5 @@ public interface __IAPI<T> extends IAPP {
 
 	public Long getCountLong(T param);
 
-	public Map<String, Object> getPageList(String columns, DataGridModel dgm, T model);
 
 }
