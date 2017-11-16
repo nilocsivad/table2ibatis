@@ -88,33 +88,6 @@ public abstract class __APIDefaultImpl<T> implements __IAPI<T> {
 		return file.substring(index);
 	}
 
-	protected void translateData(Map<String, Object> map, int from, String[] columns, List<?> listData) {
-		this.translateData(map, from, columns, JSON_RESULT, listData);
-	}
-
-	protected void translateData(Map<String, Object> map, int from, String[] columns, String key,
-			Collection<?> collection) {
-		try {
-			map.put(key, MapUtil.toMapList2(from, collection, columns));
-		} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			map.put(key, collection);
-			e.printStackTrace();
-		}
-	}
-
-	protected void translateData(Map<String, Object> map, int from, String[] columns, __Model oneData) {
-		this.translateData(map, from, columns, JSON_RESULT, oneData);
-	}
-
-	protected void translateData(Map<String, Object> map, int from, String[] columns, String key, __Model oneData) {
-		try {
-			map.put(key, MapUtil.toMap2(from, oneData, columns));
-		} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			map.put(key, oneData);
-			e.printStackTrace();
-		}
-	}
-
 	protected String storageImage(String folder, InputStream imageStream, String suffix)
 			throws FileNotFoundException, IOException {
 
@@ -287,21 +260,6 @@ public abstract class __APIDefaultImpl<T> implements __IAPI<T> {
 	@Override
 	public Long getCountLong(String sqlMapID, Object param) {
 		return this.getDAO().getCountLong(sqlMapID, param);
-	}
-
-	@Override
-	public Map<String, Object> getPageList(String columns, DataGridModel dgm, T model) {
-		return this.getPageList(columns, this.getPrefixOfSqlMapID() + "getPageList", this.getPrefixOfSqlMapID() + "getCountLongMap", dgm, model);
-	}
-
-	@Override
-	public Map<String, Object> getPageList(String columns, String sqlMapSelectID, String sqlMapCountID, DataGridModel dgm, T model) {
-		return this.getPageList(columns, sqlMapSelectID, sqlMapCountID, dgm, model, null);
-	}
-
-	@Override
-	public Map<String, Object> getPageList(String columns, String sqlMapSelectID, String sqlMapCountID, DataGridModel dgm, T model, Map<String, Object> map) {
-		return this.getDAO().getPageList(columns, sqlMapSelectID, sqlMapCountID, dgm, model, map);
 	}
 
 

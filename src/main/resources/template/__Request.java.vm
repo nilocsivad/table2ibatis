@@ -40,38 +40,12 @@ public class __Request implements IAPP {
 	}
 
 	private RequestContext reqCtx;
-
-
-
-
+	
 	protected String getMessage(HttpServletRequest request, String key) {
 		if (reqCtx == null) {
 			reqCtx = new RequestContext(request);
 		}
 		return reqCtx.getMessage(key);
-	}
-
-	public Map<String, Object> queryLimit(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>(3);
-		map.put(JSON_KEY, this.getClass().getName());
-		// map.put(JSON_RESULT_KEY, System.getenv());
-		{
-			Map<String, Object> extra = new HashMap<String, Object>(8);
-			// extra.put("", );
-			extra.put("webapp.root", System.getProperty("webapp.root"));
-			// extra.put("package_name", System.getProperty("package_name"));
-			// extra.put("file_name", System.getProperty("file_name"));
-			// extra.put("project_name", System.getProperty("project_name"));
-			// extra.put("time", System.getProperty("time"));
-			// {
-			// Properties props = System.getProperties();
-			// props.forEach((key, value) -> {
-			// extra.put(key.toString(), value);
-			// });
-			// }
-			map.put(JSON_RESULT, extra);
-		}
-		return map;
 	}
 
 	protected boolean existsText(HttpServletRequest request, String find) {
@@ -97,34 +71,6 @@ public class __Request implements IAPP {
 		int port = request.getServerPort();
 		String http = request.getServerName() + (port == 80 ? "" : ":" + port) + "/" + ConstUtil.getResourcePrefix() + "/";
 		return request.getScheme() + "://" + http.replace("//", "/");
-	}
-
-	protected void translateData(Map<String, Object> map, int from, String[] columns, List<?> listData) {
-		this.translateData(map, from, columns, JSON_RESULT, listData);
-	}
-
-	protected void translateData(Map<String, Object> map, int from, String[] columns, String key, List<?> listData) {
-		try {
-			map.put(key, MapUtil.toMapList2(from, listData, columns));
-		}
-		catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			map.put(key, listData);
-			e.printStackTrace();
-		}
-	}
-
-	protected void translateData(Map<String, Object> map, int from, String[] columns, __Model oneData) {
-		this.translateData(map, from, columns, JSON_RESULT, oneData);
-	}
-
-	protected void translateData(Map<String, Object> map, int from, String[] columns, String key, __Model oneData) {
-		try {
-			map.put(key, MapUtil.toMap2(from, oneData, columns));
-		}
-		catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			map.put(key, oneData);
-			e.printStackTrace();
-		}
 	}
 
 	protected String suffix(String file) {

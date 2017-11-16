@@ -61,17 +61,6 @@ public interface __IAPI<T> extends IAPP {
 	public Long getCountLong(String sqlMapID, Object param);
 	
 	
-	
-	
-	public Map<String, Object> getPageList(String[] columns, String sqlMapSelectID, String sqlMapCountID, DataGridModel dgm, T model);
-
-	public Map<String, Object> getPageList(String columns, String sqlMapSelectID, String sqlMapCountID, DataGridModel dgm, T model);
-	
-	public Map<String, Object> getPageList(String[] columns, String sqlMapSelectID, String sqlMapCountID, DataGridModel dgm, T model, Map<String, Object> map);
-
-	public Map<String, Object> getPageList(String columns, String sqlMapSelectID, String sqlMapCountID, DataGridModel dgm, T model, Map<String, Object> map);
-
-
 
 
 	public Object save(T model);
