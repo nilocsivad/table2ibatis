@@ -229,7 +229,7 @@
 		</dynamic>
 	</select>
 	
-	<select id="${bean}Model.getPageList" remapResults="true" resultClass="${bean}Model" parameterClass="java.util.HashMap">
+	<select id="${bean}Model.SplitListData" remapResults="true" resultClass="${bean}Model" parameterClass="java.util.HashMap">
 		SELECT ${__4}columns${__4} FROM
 		<include refid="TABLE_${beanUpper}" />
 		<dynamic prepend="WHERE">
@@ -239,8 +239,8 @@
 #end
 #end
 		</dynamic>
-		ORDER BY $sort$ $order$
-		LIMIT $begin$, $end$
+		<isNotEmpty property="sort_order"> ORDER BY $sort_order$ </isNotEmpty>
+		<isNotEmpty property="limit_len"> LIMIT $limit_len$ </isNotEmpty>
 	</select>
 
 
